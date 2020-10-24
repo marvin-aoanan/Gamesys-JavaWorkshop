@@ -1,0 +1,75 @@
+@startuml
+
+skinparam {
+    shadowing false
+    defaultTextAlignment center
+    ArrowColor #333333
+}
+skinparam rectangle {
+    Shadowing false
+    StereotypeFontSize 0
+    FontColor #444444
+    BorderColor #444444
+    BorderStyle dashed
+}
+!define Boundary(e_alias, e_label) rectangle "==e_label" as e_alias
+
+title Employee Expense Reimbursement System Diagram
+
+rectangle user #cccccc[
+    ===User
+    (Employee Role)
+
+    A person that create and send request (expense)
+]
+rectangle hradmin #cccccc[
+    ===User
+    (HR/Admin Role)
+
+    A person that approves request (expense)
+]
+
+database "MySql" {
+  folder "Expense" {
+    [Expenses Data]
+  }  
+  folder "Employee" {
+    [Employee Data]
+  }
+}
+    
+Boundary(eer_system, "Employee Expense Reimbursement System"){
+
+    rectangle eers #99ffff[
+        ===EER System
+        (Component: Java App)
+
+        A system that can be use to create, send and approve request of employee's expenses
+    ]
+    
+    rectangle controller #99ffff[
+        ===Controller
+        (Component: Java Class)
+
+        Identifies the request and
+        and renders the forms
+    ]
+    rectangle view #99ffff[
+        ===View
+        (View: Vue/Twig, HTML, CSS)
+    ]
+    rectangle model #99ffff[
+        ===Model
+        (Model: EmployeeModel [reg, probi, admin])
+        (Model: ExpenseModel [phone, gym, med])
+    ]
+}
+
+user --> eers: Access EER System
+hradmin --> eers: Access EER System
+eers --> controller: Filter/Servlet
+controller --> view: Renders the forms
+controller --> model: Uses Model / Data
+model --> MySql: Store/Retrieve data
+
+@enduml
